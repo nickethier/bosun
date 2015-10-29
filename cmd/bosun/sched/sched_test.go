@@ -15,7 +15,7 @@ import (
 	"bosun.org/_third_party/github.com/MiniProfiler/go/miniprofiler"
 	"bosun.org/cmd/bosun/conf"
 	"bosun.org/cmd/bosun/database"
-	"bosun.org/cmd/bosun/expr"
+	"bosun.org/models"
 	"bosun.org/opentsdb"
 	"bosun.org/slog"
 )
@@ -34,7 +34,7 @@ type schedTest struct {
 	queries map[string]opentsdb.ResponseSet
 	// state -> active
 	state    map[schedState]bool
-	previous map[expr.AlertKey]*State
+	previous map[models.AlertKey]*State
 }
 
 // test-only function to check all alerts immediately.
@@ -259,7 +259,7 @@ func TestUnknown(t *testing.T) {
 		state: map[schedState]bool{
 			schedState{"a{a=b}", "unknown"}: true,
 		},
-		previous: map[expr.AlertKey]*State{
+		previous: map[models.AlertKey]*State{
 			"a{a=b}": state,
 			"a{a=c}": stillValid,
 		},
@@ -285,7 +285,7 @@ func TestUnknown_HalfFreq(t *testing.T) {
 		state: map[schedState]bool{
 			schedState{"a{a=b}", "unknown"}: true,
 		},
-		previous: map[expr.AlertKey]*State{
+		previous: map[models.AlertKey]*State{
 			"a{a=b}": state,
 			"a{a=c}": stillValid,
 		},
@@ -305,7 +305,7 @@ func TestUnknown_WithError(t *testing.T) {
 			`q("avg:m{a=*}", ` + window5Min + `)`: nil,
 		},
 		state: map[schedState]bool{},
-		previous: map[expr.AlertKey]*State{
+		previous: map[models.AlertKey]*State{
 			"a{a=b}": state,
 		},
 	})

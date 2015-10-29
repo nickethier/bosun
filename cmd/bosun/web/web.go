@@ -18,7 +18,6 @@ import (
 	"bosun.org/_third_party/github.com/MiniProfiler/go/miniprofiler"
 	"bosun.org/_third_party/github.com/gorilla/mux"
 	"bosun.org/cmd/bosun/conf"
-	"bosun.org/cmd/bosun/expr"
 	"bosun.org/cmd/bosun/sched"
 	"bosun.org/collect"
 	"bosun.org/metadata"
@@ -389,7 +388,7 @@ func IncidentEvents(t miniprofiler.Timer, w http.ResponseWriter, r *http.Request
 		return nil, err
 	}
 	return struct {
-		Incident *sched.Incident
+		Incident *models.Incident
 		Events   []sched.Event
 		Actions  []sched.Action
 	}{incident, events, actions}, nil
@@ -430,7 +429,7 @@ func Status(t miniprofiler.Timer, w http.ResponseWriter, r *http.Request) (inter
 	}
 	m := make(map[string]ExtStatus)
 	for _, k := range r.Form["ak"] {
-		ak, err := expr.ParseAlertKey(k)
+		ak, err := models.ParseAlertKey(k)
 		if err != nil {
 			return nil, err
 		}
@@ -467,9 +466,9 @@ func Action(t miniprofiler.Timer, w http.ResponseWriter, r *http.Request) (inter
 	}
 	errs := make(MultiError)
 	r.ParseForm()
-	successful := []expr.AlertKey{}
+	successful := []models.AlertKey{}
 	for _, key := range data.Keys {
-		ak, err := expr.ParseAlertKey(key)
+		ak, err := models.ParseAlertKey(key)
 		if err != nil {
 			return nil, err
 		}
